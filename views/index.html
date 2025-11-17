@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Go Live Server - Proyecto</title>
+    <link rel="stylesheet" href="/style/styles.css">
+</head>
+<body>
+    <form action="" name="form-contato" id="form-contato">
+        <fieldset>
+            <legend>
+                Dados Cadastrais
+            </legend>
+
+            <label for="txt-nome">
+                Nome
+            </label>
+            <br>
+            <input type="text" name="txt-nome" id="txt-nome" placeholder="Insira aqui o seu nome" required>
+            <br><br>
+
+            <label for="txt-email">
+                Email
+            </label>
+            <br>
+            <input type="text" name="txt-email" id="txt-email" placeholder="Insira aqui o seu Email" required>
+            <br><br>
+            
+            <label for="txt-dtnascimento">
+                Dt Nascimento
+            </label>
+            <br>
+            <input type="date" name="txt-dtnascimento" id="txt-dtnascimento" required>
+            <br><br>
+            
+            <label>
+                Gênero
+            </label>
+            <input type="radio" name="rdo-genero" id="rdo-genero-m" value="M">
+            <label for="rdo-genero-m">
+                Masculino
+            </label>
+            <input type="radio" name="rdo-genero" id="rdo-genero-f" value="F">
+            <label for="rdo-genero-m">
+                Feminino
+            </label>
+            <br><br>
+            
+        </fieldset>       
+
+        <br><br>        
+        <button id="btn-enviar" type="button">Enviar</button>
+
+<script type="text/javascript" src="/js/jquery-3.7.1.min.js"></script>
+<script type="text/javascript">
+    $( document ).ready(function() {
+
+        $("#btn-enviar").on("click", function() {
+
+            const dados = {
+                    nome:           $("#txt-nome").val(),
+                    email:          $("#txt-email").val(),
+                    dataNascimento: $("#txt-dtnascimento").val(),
+                    genero:         $('input[name="rdo-genero"]:checked').val()
+                };
+
+            console.log(dados);
+
+            $.ajax({
+                urt: "http://localhost:3000/contato",
+                type: "POST",
+                data: dados,
+                dataType: "json"
+            }).done(function(dados){
+
+            });
+
+        });
+        
+    });
+</script>
+</body>
+</html>
+    
