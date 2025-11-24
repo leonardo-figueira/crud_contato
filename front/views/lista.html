@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Contatos</title>
+    <link rel="stylesheet" href="/lib/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/style/datatables.min.css">
+    <link rel="stylesheet" href="/lib/bootstrap-icons-1.13.1/bootstrap-icons.css">
+    <script type="text/javascript" src="/js/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="/lib/bootstrap-5.3.8-dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/datatables.min.js"></script>
+</head>
+<body>
+    <div class="row">        
+        <nav class="nav nav-pills nav-justified">
+            <a class="nav-link active" aria-current="page" href="#">Lista de Contatos</a>
+            <a class="nav-link" href="http://127.0.0.1:5500/views/cadastro.html">Cadastrar Contato</a>            
+        </nav>
+    </div>
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <table id="lista-contatos" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th width="40%">Nome</th>
+                        <th width="30%">Email</th>
+                        <th width="10%">Dt. Nasc</th>
+                        <th width="10%">Gênero</th>
+                        <th width="10%">#</th>
+                    </tr>
+                </thead>
+                <tbody id="lista-contatos-tbody">                    
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+    <script type="text/javascript">
+
+        function formatarData(data) {
+            data = data.split("-");
+
+            return data[2]+"/"+data[1]+"/"+data[0];
+        }
+
+        function verificarGenero(genero) {
+            if (genero === "M") {
+                genero = "Masculino";
+            } else if(genero === "F") {
+                genero = "Feminino";
+            }
+
+            return genero;
+        }
+
+        $(document).ready(function() {
+
+            $.ajax({
+                url: "http://127.0.0.1:3000/contato",
+                type: "GET",
+                data: "",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            }).done(function(contatos){            
+                
+                for (let i = 0; i < contatos.length; i++) {
+                    $("#lista-contatos-tbody").append(
+                        `<tr>
+                            <td>${contatos[i].nome}</td>
+                            <td>${contatos[i].email}</td>
+                            <td>${formatarData(contatos[i].dt_nascimento)}</td>
+                            <td>${verificarGenero(contatos[i].genero)}</td>
+                            <td>
+                                <a class="btn btn-light" href="http://127.0.0.1:5500/views/cadastro.html?id=${contatos[i].id}"><i class="bi bi-pencil-fill"></i></a>&nbsp;
+                                <button type="button" class="btn btn-danger deletar" data-id="${contatos[i].id}"><i class="bi bi-trash-fill"></i></button>
+                            </td>
+                        </tr>`
+                    );
+                }
+
+                new DataTable('#lista-contatos', {
+                    language: {
+                        "decimal":        ",",
+                        "emptyTable":     "Nenhum contato",
+                        "info":           "Exibindo de _START_ até _END_ de um total de _TOTAL_",
+                        "infoEmpty":      "Exibindo de 0 até 0",
+                        "infoFiltered":   "(Filtrado até _MAX_)",
+                        "infoPostFix":    "",
+                        "thousands":      ",",
+                        "lengthMenu":     "Exibir _MENU_ linhas",
+                        "loadingRecords": "Carregando...",
+                        "processing":     "",
+                        "search":         "Pesquisar:",
+                        "zeroRecords":    "Nenhuma informação encontrada",
+                        "paginate": {
+                            "first":      "Primeiro",
+                            "last":       "Último",
+                            "next":       "Próximo",
+                            "previous":   "Anterior"
+                        },
+                        "aria": {
+                            "orderable":  "Ordenar",
+                            "orderableReverse": "Ordenar reversamente"
+                        }
+                    }
+                });
+            });
+
+            $(document).on('click', '.deletar', function() {
+                const id = $(this).data("id");
+
+                $.ajax({
+                    url: `http://127.0.0.1:3000/contato/${id}`,
+                    type: "DELETE",
+                    data: "",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                }).done(function(contatos){
+                    alert("Contato deletado com sucesso");
+                    location.reload();
+                });  
+
+            });
+
+        });
+    </script>
+</body>
+</html>
